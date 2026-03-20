@@ -24,3 +24,7 @@ logs
 
 # Environment variables
 .env*
+
+# Secrets
+service-account.json
+*.key.json

@@ -1,42 +1,50 @@
-import { pool } from '../db.js';
+import { db } from '../db.js';
 
 export async function getCurrencies(locale) {
-  if (locale) {
-    const { rows } = await pool.query(
-      `SELECT c.code, c.default_name, c.symbol, t.name as translated_name
-       FROM currencies c
-       LEFT JOIN currency_translations t ON c.code = t.currency_code AND t.locale = $1
-       ORDER BY c.code`,
-      [locale]
-    );
-    return rows;
-  }
+  const snapshot = await db.collection('currencies').orderBy('code').get();
+  const currencies = [];
 
-  const { rows } = await pool.query(
-    `SELECT code, default_name, symbol FROM currencies ORDER BY code`
-  );
-  return rows;
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    let translatedName = null;
+
+    if (locale && data.translations) {
+      const translation = data.translations.find(t => t.locale === locale);
+      // SQL LEFT JOIN behavior: if translation exists, use it.
+      if (translation) {
+        translatedName = translation.name;
+      }
+    }
+
+    const currency = {
+      code: data.code,
+      default_name: data.default_name,
+      symbol: data.symbol
+    };
+
+    if (locale) {
+      currency.translated_name = translatedName;
+    }
+
+    currencies.push(currency);
+  });
+
+  return currencies;
 }
 
 export async function getCurrency(code, locale) {
-  const { rows } = await pool.query(
-    `SELECT c.code, c.default_name, c.symbol,
-            COALESCE(
-              json_agg(
-                json_build_object('locale', t.locale, 'name', t.name)
-              ) FILTER (WHERE t.locale IS NOT NULL),
-              '[]'
-            ) as translations
-     FROM currencies c
-     LEFT JOIN currency_translations t ON c.code = t.currency_code
-     WHERE c.code = $1
-     GROUP BY c.code, c.default_name, c.symbol`,
-    [code.toUpperCase()]
-  );
+  const doc = await db.collection('currencies').doc(code.toUpperCase()).get();
 
-  if (rows.length === 0) {
+  if (!doc.exists) {
     return null;
   }
 
-  return rows[0];
+  const data = doc.data();
+
+  return {
+    code: data.code,
+    default_name: data.default_name,
+    symbol: data.symbol,
+    translations: data.translations || []
+  };
 }
