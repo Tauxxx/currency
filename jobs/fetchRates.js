@@ -15,20 +15,29 @@ if (data.result !== 'success') {
 const rateDate = data.time_last_update_utc.slice(0, 16);
 const date = new Date(rateDate).toISOString().slice(0, 10);
 
+// Подготавливаем данные
+const rates = Object.entries(data.conversion_rates)
+  .map(([code, rate]) => ['USD', code, rate, date]);
+
+// Формируем VALUES для множественного INSERT
+const valuesPlaceholders = rates.map((_, i) => `($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4})`).join(', ');
+// console.log('Values placeholders:', valuesPlaceholders);
+
+// Собираем все параметры в один плоский массив
+const allParams = rates.flat();
 const client = await pool.connect();
+
 try {
   await client.query('BEGIN');
 
-  for (const [code, rate] of Object.entries(data.conversion_rates)) {
-    await client.query(
-      `
+  await client.query(
+    `
       INSERT INTO exchange_rates (base_code, target_code, rate, rate_date)
-      VALUES ('USD', $1, $2, $3)
+      VALUES ${valuesPlaceholders}
       ON CONFLICT DO NOTHING
-      `,
-      [code, rate, date]
-    );
-  }
+    `,
+    allParams
+  );
 
   await client.query('COMMIT');
   console.log('Rates updated:', date);

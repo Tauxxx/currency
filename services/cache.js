@@ -14,3 +14,5 @@ export function getCache(key) {
 export function setCache(key, val) {
   cache.set(key, { val, exp: Date.now() + TTL });
 }
+
+export { TTL };
