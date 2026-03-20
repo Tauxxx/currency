@@ -29,7 +29,7 @@ gcloud run deploy $SERVICE_NAME \
   --platform managed \
   --region $REGION \
   --allow-unauthenticated \
-  --set-env-vars="NODE_ENV=production,APP_KEY=$APP_KEY,EXCHANGE_API_KEY=$EXCHANGE_API_KEY,ALLOW_NO_AUTH=$ALLOW_NO_AUTH,PROJECT_ID=$PROJECT_ID"
+  --set-env-vars="NODE_ENV=production,APP_KEY=$APP_KEY,EXCHANGE_API_KEY=$EXCHANGE_API_KEY,PROJECT_ID=$PROJECT_ID"
   
 # Note: You may need to set specific env vars like EXCHANGE_API_KEY via GCP Console or command line:
 # --set-env-vars="EXCHANGE_API_KEY=your_key"

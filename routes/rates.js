@@ -5,8 +5,9 @@ export default async function (fastify) {
     const { base, target } = req.params;
     const requestedDate =
       req.query.date ?? new Date().toISOString().slice(0, 10);
+    const bypassCache = req.query.refresh === 'true';
 
-    const result = await getRate(base, target, requestedDate);
+    const result = await getRate(base, target, requestedDate, bypassCache);
 
     reply.header('Cache-Control', 'public, max-age=3600');
     return result;

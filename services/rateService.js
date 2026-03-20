@@ -1,7 +1,7 @@
 import { db } from '../db.js';
 import { getCache, setCache } from './cache.js';
 
-export async function getRate(fromCurrency, toCurrency, requestedDate) {
+export async function getRate(fromCurrency, toCurrency, requestedDate, bypassCache = false) {
   if (fromCurrency === toCurrency) {
     return {
       rate: 1,
@@ -13,7 +13,7 @@ export async function getRate(fromCurrency, toCurrency, requestedDate) {
   }
   const key = `${fromCurrency}:${toCurrency}:${requestedDate}`;
   const cached = getCache(key);
-  if (cached) return cached;
+  if (cached && !bypassCache) return cached;
   // console.warn("Cache miss for key:", key);
 
   const baseCurrency = 'USD';

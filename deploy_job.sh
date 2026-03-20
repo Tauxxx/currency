@@ -23,7 +23,7 @@ gcloud run jobs deploy $JOB_NAME \
   --region $REGION \
   --command "node" \
   --args "jobs/fetchRates.js" \
-  --set-env-vars="NODE_ENV=production,APP_KEY=$APP_KEY,EXCHANGE_API_KEY=$EXCHANGE_API_KEY,ALLOW_NO_AUTH=$ALLOW_NO_AUTH,PROJECT_ID=$PROJECT_ID" \
+  --set-env-vars="NODE_ENV=production,APP_KEY=$APP_KEY,EXCHANGE_API_KEY=$EXCHANGE_API_KEY,PROJECT_ID=$PROJECT_ID" \
   --max-retries 3 \
   --task-timeout "5m"
 
