@@ -4,12 +4,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { pool } from '../db.js';
 
+import { LOCALES } from '../config/locales.js';
+
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CLDR_PATH = path.join(__dirname, '../node_modules/cldr-numbers-full/main');
-
-const LOCALES = ['ru', 'en', 'de', 'fr', 'es', 'it', 'pt', 'ja', 'ko', 'zh', 'ar', 'tr', 'uk'];
 
 function loadCurrencies(locale) {
   const filePath = path.join(CLDR_PATH, locale, 'currencies.json');
