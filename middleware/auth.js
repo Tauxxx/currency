@@ -1,4 +1,6 @@
 export async function auth(req, reply) {
+  if (req.url === '/health') return;
+
   const key = req.headers['x-app-key'];
 
   if (!key) {
