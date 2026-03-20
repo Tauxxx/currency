@@ -15,6 +15,7 @@ logs
 
 # Optional npm cache directory
 .npm
+.DS_Store
 
 # Optional eslint cache
 .eslintcache
@@ -28,3 +29,8 @@ logs
 # Secrets
 service-account.json
 *.key.json
+
+# Utility scripts
+fix_permissions.sh
+# Legacy
+sql/

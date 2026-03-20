@@ -20,4 +20,6 @@ app.register(healthRoutes);
 await app.register(cors, {
   origin: true,
 });
-app.listen({ port: process.env.PORT, host: '0.0.0.0' });
+
+const port = parseInt(process.env.PORT) || 8080;
+app.listen({ port, host: '0.0.0.0' });
